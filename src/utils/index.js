@@ -1,10 +1,10 @@
 import axios from 'axios';
-import { useUserInfoStore } from '@/stores/index.vue';
-const userStore = useUserInfoStore();
+import { useUserStore } from '@/store/index.js';
+const userStore = useUserStore();
 
 const instance = axios.create({
   // TODO 1. 基础地址，超时时间
-  baseURL: "http://fuze1.nat300.top", // 确保这里的URL是正确的，没有多余的字符
+  baseURL: "http://192.168.73.5:8080", // 确保这里的URL是正确的，没有多余的字符
   headers: {
     'Content-Type': 'application/json',
     'token': userStore.userInfo?.token
@@ -14,11 +14,11 @@ const instance = axios.create({
 
 // 请求拦截器
 instance.interceptors.request.use(function (config) {
-  // 在发送请求之前做些什么
+
   config.headers['token'] = userStore.userInfo?.token || '';
   return config;
 }, function (error) {
-  // 对请求错误做些什么
+
   console.error(error);
   return Promise.reject(error);
 });
@@ -29,16 +29,16 @@ instance.interceptors.response.use(
     if (res.data.code === 1) {
       return res.data;
     }
-    // 将alert替换为console.log
+
     console.error("Error:", res.data);
     return Promise.reject(res.data);
   },
   (err) => {
-    // TODO 5. 处理401错误
+
     if (err.response && err.response.status === 401) {
       console.log("Unauthorized: Please login again");
     }
-    console.error(err); // 将错误记录到控制台
+    console.error(err);
     return Promise.reject(err);
   }
 );
