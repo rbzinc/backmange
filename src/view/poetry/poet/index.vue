@@ -1,5 +1,5 @@
 <script setup>
-import {computed, onMounted, ref} from "vue";
+import {computed, onMounted, ref,watch} from "vue";
 import {reqPoetDeleteData, getPoetData, reqPoetSearchData, reqPoetAddData, reqPoetUpdateData} from "@/api/modules/poetry.js";
 import {Search} from "@element-plus/icons-vue";
 import {ElMessage} from "element-plus";
@@ -26,7 +26,13 @@ let poetDates = ref({
   simpleIntro:'',
 })
 
-
+//过滤搜索
+watch(() => search.value, (newVal) => {
+  if (newVal) {
+    pageNo.value = 1; // 重置页码为1
+    getPagesDate()
+  }
+}, { immediate: true })
 
 //分页处理
 // 修改后的分页请求方法

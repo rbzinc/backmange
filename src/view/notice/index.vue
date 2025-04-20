@@ -1,5 +1,5 @@
 <script setup>
-import {onMounted, ref,watch} from 'vue'
+import {onMounted, ref} from 'vue'
 import {
   addNoticeData,
   deleteNoticeData,
@@ -178,7 +178,7 @@ const batchDelete = async () => {
       <el-input v-model="search" size="small" :prefix-icon="Search" style="width: 240px;margin-left: 30px"/>
     </div>
     <el-table border style="margin:10px 0px" :data="attrArr" @selection-change="handleSelectionChange">
-      <el-table-column type="selection" width="55" v-if="checked" />
+      <el-table-column type="selection" width="55" v-if="checked"/>
       <el-table-column label="序号" prop="id"></el-table-column>
       <el-table-column label="标题" prop="name">
       </el-table-column>

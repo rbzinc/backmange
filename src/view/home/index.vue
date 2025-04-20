@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import {onMounted, ref} from 'vue'
 import DataCard from '@/components/datacard/index.vue'
 import {postAIData } from  '@/api/modules/user.js'
 import VChart from 'vue-echarts' // 确保已安装 vue-echarts
@@ -29,7 +29,10 @@ const lineChart = ref({
   },
   yAxis: { type: 'value' },
   series: [
-    { name: '用户活跃', type: 'line', stack: '总量', data: [120, 132, 101, 134, 90, 230, 210] }
+    { name: '一月', type: 'line', stack: '总量', data: [120, 132, 101, 134, 90, 230, 210] },
+    { name: '二月', type: 'line', stack: '总量', data: [120, 25, 15, 76, 68, 354, 65] },
+    { name: '三月', type: 'line', stack: '总量', data: [59, 26, 56, 84, 74, 30, 145] },
+    { name: '四月', type: 'line', stack: '总量', data: [66, 37, 84, 274, 69, 48, 145] }
   ]
 })
 //发送ai指令
@@ -42,13 +45,17 @@ const cardlist = ref([
   { title: "诗词数量", content: 89123, icon: "Management" },
   { title: "名句数量", content: 573544, icon: "Comment" }
 ])
-const contents = async () =>{
-  const poemtotal = await PoemDatas()
-  const poettotal = await PoetDatas()
-  const sentencetotal = await SentenceDatas()
-  const usertotal = await UserDatas()
-
+console.log(cardlist.value[1].content) // 正确写法
+const getcontents = async () =>{
+  cardlist.value[2].content = await PoemDatas()
+  cardlist.value[1].content = await PoetDatas()
+  cardlist.value[3].content = await SentenceDatas()
+  cardlist.value[0].content = await UserDatas()
 }
+
+// onMounted(() => {
+//   getcontents();
+// })
 
 import { ElMessage } from 'element-plus'
 
