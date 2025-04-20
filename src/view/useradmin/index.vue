@@ -8,8 +8,6 @@ let pageSize =ref(10)
 let total = ref(0);
 //控制check栏
 let checked  = ref(false)
-
-
 const attrArr = ref([])
 
 //分页处理
@@ -21,6 +19,7 @@ const getPagesDate = async (pager = pageNo.value) => {
       pageSize: pageSize.value,
     }
     const result = await getAllusersData(params)
+    console.log(result)
     total.value = result.data.total
     attrArr.value = result.data.records
     if(attrArr.value.length === 0 && pageNo.value > 1){
@@ -59,9 +58,11 @@ onMounted(() => {
         @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" v-if="checked" />
       <el-table-column label="序号" prop="id"></el-table-column>
-      <el-table-column label="用户名" prop="name"></el-table-column>
-      <el-table-column label="注册时间" prop="createTime">
-      </el-table-column>
+      <el-table-column label="用户名" prop="username"></el-table-column>
+      <el-table-column label="电话号码" prop="phone"></el-table-column>
+      <el-table-column label="邮箱" prop="email"></el-table-column>
+      <el-table-column label="注册时间" prop="createtime"></el-table-column>
+
     </el-table>
     <el-pagination
         v-model:current-page="pageNo"

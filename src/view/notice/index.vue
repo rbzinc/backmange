@@ -191,7 +191,7 @@ const batchDelete = async () => {
           <el-button link type="primary" size="small" icon="Edit" @click="updateTrademark">
             修改
           </el-button>
-          <el-button link type="primary" size="small" icon="Delete"  @click="batchDelete()">删除</el-button>
+          <el-button link type="primary" size="small" icon="Delete" @click="batchDelete(row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

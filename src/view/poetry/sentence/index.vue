@@ -55,6 +55,7 @@ const getPagesDate = async (pager = pageNo.value) => {
         ? await reqSentenceSearchData(searchdata)
         : await getSentenceData(params)
     total.value = result.data.total
+    console.log(result.data)
     attrArr.value = result.data.records
     if(attrArr.value.length === 0 && pageNo.value > 1){
       pageNo.value--
@@ -149,17 +150,12 @@ const handleSelectionChange = (selection) => {
 }
 
 // 批量删除方法
-const batchDelete = async () => {
-  try {
-    await reqSentenceDeleteData(deleteId.value)
+const batchDelete = async (row) => {
+    const res=  await reqSentenceDeleteData(row.id)
+  console.log(res)
     ElMessage.success('成功删除')
     deleteId.value = []
     await getPagesDate()
-  } catch (error) {
-    ElMessage.error('删除失败: ' + error.message)
-  } finally {
-    confirmVisible.value = false
-  }
 }
 
 //点击增加按钮
@@ -193,13 +189,13 @@ const changedialog = () =>{
       <el-table-column type="selection" width="55" v-if="checked" />
       <el-table-column label="序号" prop="id"></el-table-column>
       <el-table-column label="名句" prop="name"></el-table-column>
-      <el-table-column label="作者-诗名" prop=" fromm"></el-table-column>
+      <el-table-column label="作者-诗名" prop="fromm"></el-table-column>
       <el-table-column fixed="right" label="操作" min-width="120">
         <template #default="{ row }" >
           <el-button link type="primary" size="small" icon="Edit" @click="updateTrademark(row)">
             修改
           </el-button>
-          <el-button link type="primary" size="small" icon="Delete" @click="batchDelete()">删除</el-button>
+          <el-button link type="primary" size="small" icon="Delete" @click="batchDelete(row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

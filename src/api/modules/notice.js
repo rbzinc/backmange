@@ -11,7 +11,9 @@ export const addNoticeData = ( params ) => instance({
 export const deleteNoticeData = ( ids ) => instance({
     url: "/notice/delete",
     method: "post",
-    data:  ids
+    params:{
+        ids
+    }
 })
 
 //获取公告列表(一次获取十条)

@@ -27,6 +27,7 @@ const getPagesDate = async (pager = pageNo.value) => {
       pageSize: pageSize.value,
     }
     const result = await postTalksquareData(params)
+    console.log(result)
     total.value = result.data.total
     attrArr.value = result.data.records
     if(attrArr.value.length === 0 && pageNo.value > 1){
@@ -72,11 +73,13 @@ const cancelDelete =() =>{
 // 处理多选变化
 const handleSelectionChange = (selection) => {
   deleteId.value = selection.map(item => item.id)
+  console.log('当前选中 ID 数组:', deleteId.value)
 }
 
 // 批量删除方法
 const batchDelete = async () => {
   try {
+    console.log(deleteId.value)
     await deleteTalksquareData(deleteId.value)
     ElMessage.success('成功删除')
     deleteId.value = []
@@ -113,15 +116,24 @@ const batchDelete = async () => {
         @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" v-if="checked" />
       <el-table-column label="序号" prop="id"></el-table-column>
-      <el-table-column label="作者" prop="name"></el-table-column>
+      <el-table-column label="时间" prop="createTime"></el-table-column>
       <el-table-column label="标题" prop="title">
       </el-table-column>
       <el-table-column label="内容" prop="content" show-overflow-tooltip>
       </el-table-column>
-      <el-table-column label="图片" prop="images"></el-table-column>
+      <el-table-column label="类型" prop="type" show-overflow-tooltip>
+      </el-table-column>
       <el-table-column fixed="right" label="操作" min-width="120">
         <template #default="{ row }">
-          <el-button @click="batchDelete(row)">删除</el-button>
+          <el-button
+              link
+              type="primary"
+              size="small"
+              icon="Delete"
+              @click="batchDelete()"
+          >
+            删除
+          </el-button>
         </template>
       </el-table-column>
     </el-table>

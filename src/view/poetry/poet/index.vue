@@ -1,8 +1,15 @@
 <script setup>
 import {computed, onMounted, ref,watch} from "vue";
-import {reqPoetDeleteData, getPoetData, reqPoetSearchData, reqPoetAddData, reqPoetUpdateData} from "@/api/modules/poetry.js";
-import {Search} from "@element-plus/icons-vue";
-import {ElMessage} from "element-plus";
+import {
+  reqPoetDeleteData,
+  getPoetData,
+  reqPoetSearchData,
+  reqPoetAddData,
+  reqPoetUpdateData,
+  reqSerPoetDeleteData
+} from "@/api/modules/poetry.js"
+import {Search} from "@element-plus/icons-vue"
+import {ElMessage} from "element-plus"
 
 const attrArr = ref([])
 let pageNo =ref(1)
@@ -46,8 +53,9 @@ const getPagesDate = async (pager = pageNo.value) => {
     const result = search.value
         ? await reqPoetSearchData(searchdata)
         : await  getPoetData(params)
+    console.log(result)
     total.value = result.data.total
-    attrArr.value = result.data.records
+    attrArr.value = result.data.list
     if(attrArr.value.length === 0 && pageNo.value > 1){
       pageNo.value--
       await getPagesDate(pageNo.value)
@@ -115,20 +123,44 @@ const updateTrademark = (row) => {
 // 处理多选变化
 const handleSelectionChange = (selection) => {
   deleteId.value = selection.map(item => item.id)
+  console.log('当前选中 ID 数组:', deleteId.value)
 }
 
 // 批量删除方法
+// const batchDelete = async () => {
+//   try {
+//     console.log(deleteId.value)
+//     await reqSerPoetDeleteData(deleteId.value)
+//     ElMessage.success('成功删除')
+//     deleteId.value = []
+//     await getPagesDate()
+//   } catch (error) {
+//     ElMessage.error('删除失败: ' + error.message)
+//   } finally {
+//     confirmVisible.value = false
+//   }
+// }
 const batchDelete = async () => {
   try {
-    await reqPoetDeleteData(deleteId.value)
-    ElMessage.success('成功删除')
+    const ids = deleteId.value.map(id => Number(id));
+    await reqSerPoetDeleteData(ids);
+    ElMessage.success('删除成功');
     deleteId.value = []
-    await getPagesDate()
+    await getPagesDate();
   } catch (error) {
     ElMessage.error('删除失败: ' + error.message)
   } finally {
-    confirmVisible.value = false
+    confirmVisible.value = false;
   }
+}
+
+const alonedelete = async (row) => {
+  const res=  await reqPoetDeleteData(row.id)
+  console.log(res.data)
+  ElMessage.success('成功删除')
+  deleteId.value = []
+  await getPagesDate()
+  confirmVisible.value = false
 }
 
 //切换批量删除的模式
@@ -194,7 +226,7 @@ const confirm = () =>{
           <el-button link type="primary" size="small" icon="Edit" @click="updateTrademark(row)">
             修改
           </el-button>
-          <el-button link type="primary" size="small" icon="Delete" @click="batchDelete()">删除</el-button>
+          <el-button link type="primary" size="small" icon="Delete" @click="alonedelete(row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>

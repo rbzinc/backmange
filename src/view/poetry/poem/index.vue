@@ -2,7 +2,7 @@
 import {ref,computed,onMounted,watch} from 'vue'
 import {getPoemData,reqPoemUpdateData,reqPoemAddData,reqPoemDeleteData,reqPoemSearchData} from "@/api/modules/poetry.js";
 import {Lock, Search} from "@element-plus/icons-vue";
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage } from 'element-plus'
 
 //搜索框输入
 let search = ref('')
@@ -49,7 +49,6 @@ const getPagesDate = async (pager = pageNo.value) => {
       pageSize: pageSize.value,
     }
     const searchdata = search.value
-    //判断进行搜素还是获取数据的操作
     const result = search.value
         ? await reqPoemSearchData(searchdata)
         : await getPoemData(params)
@@ -66,14 +65,15 @@ const getPagesDate = async (pager = pageNo.value) => {
 
 // 统一分页事件处理
 const handlePagination = (type, val) => {
-  if(type === 'size'){
-    pageSize.value = val
-    pageNo.value = 1 // 切换每页数量时重置页码
-    getPagesDate(1)
+  if (type === 'size') {
+    pageSize.value = val;
+    pageNo.value = 1; // 切换每页数量时重置页码
+    getPagesDate(1);  // 保持搜索状态
   } else {
-    getPagesDate(val)
+    pageNo.value = val;
+    getPagesDate(val);
   }
-}
+};
 
 onMounted(() => {
   getPagesDate();
@@ -149,7 +149,6 @@ const handleSelectionChange = (selection) => {
 const batchDelete = async () => {
   try {
     console.log(deleteId.value)
-    console.log(Array.isArray(deleteId.value))
     await reqPoemDeleteData(deleteId.value)
     ElMessage.success('成功删除')
     deleteId.value = []
@@ -196,14 +195,15 @@ const cancel = () =>{
       <el-table-column label="序号" prop="id" label-width="80"></el-table-column>
       <el-table-column label="诗词名" prop="title" label-width="80">
       </el-table-column>
-      <el-table-column label="朝代" prop="dynasty" label-width="80"></el-table-column>
+      <el-table-column label="朝代" prop="dynasty" label-width="80">
+
+      </el-table-column>
       <el-table-column label="作者" prop="writer" label-width="80">
         <template #="{row,$index}">
           <pre>{{row.writer}}</pre>
         </template>
       </el-table-column>
       <el-table-column label="内容" prop="content" label-width="80" show-overflow-tooltip></el-table-column>
-      <el-table-column label="类型" prop="type" label-width="80" show-overflow-tooltip></el-table-column>
       <el-table-column fixed="right" label="操作" min-width="120">
         <template #default="{ row }">
           <el-button

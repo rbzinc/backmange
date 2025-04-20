@@ -51,7 +51,7 @@ export const reqPoetUpdateData = ( params ) => instance({
 })
 
 //诗人增加数据
-export const reqPoetAddData = (params ) => instance({
+export const reqPoetAddData = ( params ) => instance({
     url: "/admin/potry/add",
     method: "post",
     data: params
@@ -61,14 +61,25 @@ export const reqPoetAddData = (params ) => instance({
 export const reqPoetDeleteData = (ids) => instance({
     url: "/admin/potry/GetPoemPage",
     method: "get",
-    query: ids
+    params:{
+        ids
+    }
+});
+
+//
+export const reqSerPoetDeleteData = (ids) => instance({
+    url: "/admin/potry/GetPoemPage",
+    method: "get",
+    params:{
+        ids: ids
+    }
 });
 
 //诗人搜索数据
 export const reqPoetSearchData = (data) => instance({
     url: "/admin/writer/getWriterByName",
     method: "get",
-    query: {
+    params: {
         name:data
     },
 });
@@ -98,14 +109,16 @@ export const reqSentenceAddData = (params) => instance({
 export const reqSentenceDeleteData = (ids) => instance({
     url: "/delete",
     method: "post",
-    query: ids
+    params:{
+        ids
+    }
 });
 
 //名句搜索数据
 export const reqSentenceSearchData = (data) => instance({
     url: "/getRhesisByPoemName",
     method: "post",
-    query: {
+    params: {
         name:data
     },
 });
