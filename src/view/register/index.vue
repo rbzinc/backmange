@@ -132,9 +132,12 @@ const register = async () => {
 
 <style lang="scss" scoped>
 .register_container {
+  background-image: url('@/assets/images/微信图片_20250420142019.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   width: 100%;
   height: 100vh;
-  background-size: cover;
   .register_form {
     position: relative;
     width: 80%;

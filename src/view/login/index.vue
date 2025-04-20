@@ -59,7 +59,7 @@ const login = async () => {
     useUser.setUserInfo(data)
     useUser.username = loginFrom.value.username
     ElMessage.success('登录成功')
-    router.push('/layout')
+    router.push('/home')
   } catch (error) {
     console.error(error) // 打印错误信息以方便调试
     ElMessage.error('用户名或密码错误')
@@ -139,7 +139,10 @@ onMounted(() => {
 .login_container {
   width: 100%;
   height: 100vh;
+  background-image: url('@/assets/images/微信图片_20250420142019.jpg');
   background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   .login_form {
     position: relative;
     width: 80%;

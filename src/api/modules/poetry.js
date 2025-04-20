@@ -1,109 +1,111 @@
 import instance from '@/utils/index.js';
 
-export const getPoemData = (pageNum, pageSize) => instance({
+
+//古诗获取信息
+export const getPoemData = ( params ) => instance({
     url: "/admin/potry/GetPoemPage",
     method: "get",
-    query: {
-        pageNum,
-        pageSize,
-    },
+    params
 });
 
 //古诗修改数据
-export const reqPoemUpdateData = ( id, title, dynasty, writer, content, type ) => instance({
+export const reqPoemUpdateData = ( params ) => instance({
     url: "/admin/potry/update",
     method: "post",
-    data: { id, title, dynasty, writer, content, type }
+    data: params
 })
 
 //古诗增加数据
-export const reqPoemAddData = (id, title, dynasty, writer, content, type ) => instance({
+export const reqPoemAddData = (data) => instance({
     url: "/admin/potry/add",
     method: "post",
-    data: { id, title, dynasty, writer, content, type }
+    data:data
 })
 
 //古诗搜索数据
-
+export const reqPoemSearchData = (id, title, dynasty, writer, content, type ) => instance({
+    url: "/admin/potry/getPoem",
+    method: "get",
+    data: { id, title, dynasty, writer, content, type }
+})
 
 //古诗删除数据
-// src/api/modules/poetry.js
-export const reqPoemDeleteData = (ids) => {
-
-
-
-    return instance({
+export const reqPoemDeleteData = (ids) => instance({
         url: "/admin/potry/delete",
         method: "post",
-        data: ids// 根据后端需求选择格式
-        // 如果后端需要逗号分隔字符串：
-        // data: { ids: idArray.join(",") }
+        data: ids
     });
-};
 
-export const getPoetData = (pageNum, pageSize) => instance({
+//获取诗人信息
+export const getPoetData = (params) => instance({
     url: "/admin/writer/GetWritersByPage",
     method: "get",
-    query: {
-        pageNum,
-        pageSize,
-    },
+    query: params
 });
 
 //诗人修改数据
-export const reqPoetUpdateData = ( id, title, dynasty, writer, content, type ) => instance({
+export const reqPoetUpdateData = ( params ) => instance({
     url: "/admin/potry/update",
     method: "post",
-    data: { id, title, dynasty, writer, content, type }
+    data: params
 })
 
 //诗人增加数据
-export const reqPoetAddData = (id, title, dynasty, writer, content, type ) => instance({
+export const reqPoetAddData = (params ) => instance({
     url: "/admin/potry/add",
     method: "post",
-    data: { id, title, dynasty, writer, content, type }
+    data: params
 })
 
 //诗人删除数据
-export const reqPoetDeleteData = (pageNum, pageSize) => instance({
+export const reqPoetDeleteData = (ids) => instance({
     url: "/admin/potry/GetPoemPage",
     method: "get",
+    query: ids
+});
+
+//诗人搜索数据
+export const reqPoetSearchData = (data) => instance({
+    url: "/admin/writer/getWriterByName",
+    method: "get",
     query: {
-        pageNum,
-        pageSize,
+        name:data
     },
 });
 
-
-export const getSentenceData = (pageNum, pageSize) => instance({
+//获取名句数据
+export const getSentenceData = (params) => instance({
     url: "/GetAll",
     method: "get",
-    query: {
-        pageNum,
-        pageSize,
-    },
+    params
 });
 
 //名句修改数据
-export const reqSentenceUpdateData = ( id, name, fromm) => instance({
+export const reqSentenceUpdateData = ( params) => instance({
     url: "/update",
     method: "post",
-    data: { id, name, fromm }
+    data: params
 })
 
 //名句增加数据
-export const reqSentenceAddData = (id, name, fromm) => instance({
+export const reqSentenceAddData = (params) => instance({
     url: "/add",
     method: "post",
-    data: { id, name, fromm }
+    data: params
 })
 
 //名句删除数据
-export const reqSentenceDeleteData = (data) => instance({
+export const reqSentenceDeleteData = (ids) => instance({
     url: "/delete",
     method: "post",
-    query: {
-        ids:data
+    query: ids
+});
 
+//名句搜索数据
+export const reqSentenceSearchData = (data) => instance({
+    url: "/getRhesisByPoemName",
+    method: "post",
+    query: {
+        name:data
     },
 });

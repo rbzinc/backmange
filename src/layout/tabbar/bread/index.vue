@@ -15,9 +15,9 @@ const changeIcon = () => {
 
 <template>
   <!-- 顶部左侧静态 -->
-  <el-icon style="margin-right:10px" @click="changeIcon">
-    <component :is="LayOutSettingStore.fold ? 'Fold' : 'Expand'"></component>
-  </el-icon>
+<!--  <el-icon style="margin-right:10px" @click="changeIcon">-->
+<!--    <component :is="LayOutSettingStore.fold ? 'Fold' : 'Expand'"></component>-->
+<!--  </el-icon>-->
   <!-- 左侧面包屑 -->
   <el-breadcrumb separator-icon="ArrowRight">
     <!-- 面包动态展示路由名字与标题 -->

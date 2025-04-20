@@ -28,6 +28,7 @@ export const constantRoute = [
             hidden: false,
             icon: "",
         },
+        redirect: "/home",
         children: [
             {
                 path: "/home",
@@ -48,7 +49,7 @@ export const constantRoute = [
     meta: {
         title: "诗阁",
         hidden: false,
-        icon: "HomeFilled",
+        icon: "MoreFilled",
     },
     children: [
         {
@@ -57,7 +58,7 @@ export const constantRoute = [
             name: 'poem',
             meta: {
                 title: "诗词",
-                icon: "Lock",
+                icon: "Management",
                 hidden: false,
             },
         },
@@ -67,7 +68,7 @@ export const constantRoute = [
             name: 'poet',
             meta: {
                 title: "诗人",
-                icon: "Lock",
+                icon: "Avatar",
                 hidden: false,
             },
         },
@@ -77,7 +78,7 @@ export const constantRoute = [
             name: 'sentence',
             meta: {
                 title: "名句",
-                icon: "Lock",
+                icon: "Comment",
                 hidden: false,
             },
         }
@@ -99,7 +100,7 @@ export const constantRoute = [
                 component: () => import("@/view/useradmin/index.vue"),
                 meta: {
                     title: "用户管理",
-                    icon: "Lock",
+                    icon: "UserFilled",
                     hidden: false,
                 },
             },
@@ -121,7 +122,7 @@ export const constantRoute = [
                 component: () => import("@/view/talkSquare/index.vue"),
                 meta: {
                     title: "论坛管理",
-                    icon: "Lock",
+                    icon: "Platform",
                     hidden: false,
                 },
             },
@@ -143,29 +144,29 @@ export const constantRoute = [
                 component: () => import("@/view/notice/index.vue"),
                 meta: {
                     title: "公告管理",
-                    icon: "Lock",
+                    icon: "BellFilled",
                     hidden: false,
                 },
             },
         ]
     },
     {
-        path: '/notebook',
+        path: '/notebook.js',
         component: () => import('@/layout/index.vue'),
         name: 'notebook',
         meta: {
             title: "",
-            icon: "",
+            icon: "List",
             hidden: false,
         },
-        redirect: "/notebook/view",
+        redirect: "/notebook.js/view",
         children: [
             {
-                path: "/notebook/view",
+                path: "/notebook.js/view",
                 component: () => import("@/view/notebook/index.vue"),
                 meta: {
                     title: "管理员日志",
-                    icon: "Lock",
+                    icon: "List",
                     hidden: false,
                 },
             },

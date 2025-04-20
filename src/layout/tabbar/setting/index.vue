@@ -12,8 +12,8 @@ const username = useUser.username
 </script>
 
 <template>
-  <el-button size="small" icon="Refresh" circle ></el-button>
-  <el-button size="small" icon="FullScreen" circle ></el-button>
+<!--  <el-button size="small" icon="Refresh" circle ></el-button>-->
+<!--  <el-button size="small" icon="FullScreen" circle ></el-button>-->
   <img :src="imgUrl" style="width: 24px;height: 24px;margin:0px 10px;border-radius: 50%;">
   <el-dropdown trigger="click">
     <span class="el-dropdown-link">

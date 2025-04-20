@@ -1,8 +1,14 @@
 <script setup>
-import {computed, onMounted, ref} from "vue";
-import {getSentenceData,reqSentenceUpdateData,reqSentenceAddData,reqSentenceDeleteData} from "@/api/modules/poetry.js"
+import {computed, onMounted, ref, watch} from "vue";
+import {
+  getSentenceData,
+  reqSentenceUpdateData,
+  reqSentenceAddData,
+  reqSentenceDeleteData,
+  reqSentenceSearchData,
+} from "@/api/modules/poetry.js"
 import {Search} from "@element-plus/icons-vue";
-
+import { ElMessage, ElMessageBox } from 'element-plus'
 
 //获取的诗词信息
 const attrArr = ref([])
@@ -19,63 +25,90 @@ let changebom =ref(false)
 //控制确认删除
 let confirmVisible = ref(false)
 const search = ref('')
-
-//搜索框搜索
-const filterTableData = computed(() =>
-    tableData.filter(
-        (data) =>
-            !search.value ||
-            data.name.toLowerCase().includes(search.value.toLowerCase())
-    )
-)
-
-//分页处理
-const getPagesDate = async (pager = 1) => {
-  //当前页码
-  pageNo.value = pager
-  const result = await getSentenceData(pageNo.value, pageSize.value);
-  if (result.code == 200) {
-    total.value = result.data.total
-    attrArr.value = result.data.records
-    console.log(attrArr.value)
-  }
-}
-
-onMounted(() => {
-  getPagesDate();
-  console.log(attrArr.value)
-})
-
+//控制表单的值
+const dialogFormVisible = ref(false)
 //定义收集新增古诗数据
 let sentenceDates = ref({
   id:'',
   fromm: '',
   name:'',
 })
+//过滤搜索
+watch(() => search.value, (newVal) => {
+  if (newVal) {
+    pageNo.value = 1; // 重置页码为1
+    getPagesDate()
+  }
+}, { immediate: true })
+
+//分页处理
+// 修改后的分页请求方法
+const getPagesDate = async (pager = pageNo.value) => {
+  try {
+    const params = {
+      pageNum: pager,
+      pageSize: pageSize.value,
+    }
+    const searchdata = search.value
+    //判断进行搜素还是获取数据的操作
+    const result = search.value
+        ? await reqSentenceSearchData(searchdata)
+        : await getSentenceData(params)
+    total.value = result.data.total
+    attrArr.value = result.data.records
+    if(attrArr.value.length === 0 && pageNo.value > 1){
+      pageNo.value--
+      await getPagesDate(pageNo.value)
+    }
+  } catch (error) {
+    ElMessage.error(`数据加载失败: ${error.message}`)
+  }
+}
+
+// 统一分页事件处理
+const handlePagination = (type, val) => {
+  if(type === 'size'){
+    pageSize.value = val
+    pageNo.value = 1 // 切换每页数量时重置页码
+    getPagesDate(1)
+  } else {
+    getPagesDate(val)
+  }
+}
+
+onMounted(() => {
+  getPagesDate();
+})
 
 //发送修改增加请求
+//发送修改增加请求
 const postData = async () => {
-  if(sentenceDates.id){
-    //发送修改请求
-    let result  = await reqSentenceUpdateData(sentenceDates);
-  }
-  //发送增加请求
-  else{
-    let result  = await reqSentenceAddData(sentenceDates);
-  }
-  if (result.code == 200) {
-    dialogFormVisible.value = false;
-    ElMessage({
-      type: 'success',
-      message: sentenceDates.id ? '修改品牌成功' : '添加品牌成功'
-    });
-    getPoems(sentenceDates.id ? pageNo.value : 1);
-  } else {
-    ElMessage({
-      type: 'error',
-      message: sentenceDates.id ? '修改品牌失败' : '添加品牌失败'
-    });
-    dialogFormVisible.value = false;
+  try {
+    const params = {
+      id: sentenceDates.value.id,
+      name: sentenceDates.value.name,
+      fromm: sentenceDates.value.fromm,
+    }
+    console.log(params)
+    //转换为布尔值并进行判断
+    const isEdit = !!params.id;
+    const result = isEdit
+        ? await reqSentenceUpdateData(params)
+        : await reqSentenceAddData(params);
+    if (result.code === 1) {
+      ElMessage.success(isEdit ? '名句修改成功' : '名句添加成功');
+      dialogFormVisible.value = false;
+      await getPagesDate(pageNo.value);
+    } else {
+      ElMessage({
+        type: 'error',
+        message: isEdit ? '修改名句失败' : '添加名句失败'
+      });
+      dialogFormVisible.value = false;
+    }
+  } catch (error) {
+    console.error('操作失败:', error);
+    ElMessage.error(`操作失败: ${error.message}`);
   }
 }
 
@@ -85,15 +118,22 @@ const updateTrademark = (row) => {
   Object.assign(sentenceDates, row)
 }
 
+//取消按钮
+const cancel = () =>{
+  dialogFormVisible.value = false
+}
+
 //切换批量删除的模式
 const handleOk = () => {
   checked.value = true
   changebom.value = true
 }
+
 //确认删除
 const handleCancel = () => {
   confirmVisible.value = true
 }
+
 //取消删除
 const cancelDelete =() =>{
   checked.value = false
@@ -101,21 +141,33 @@ const cancelDelete =() =>{
   confirmVisible.value = false
 }
 
+//进行删除操作
+// 处理多选变化
+const handleSelectionChange = (selection) => {
+  deleteId.value = selection.map(item => item.id)
+  console.log('当前选中 ID 数组:', deleteId.value)
+}
+
 // 批量删除方法
-const batchDelete = async  () => {
-  if (deleteId.value.length === 0) {
-    ElMessage.warning('请至少选择一条要删除的记录')
-    return
-  }
-  try{
-    //调用删除接口
-    reqSentenceDeleteData(deleteId)
-    ElMessage.success('删除成功')
-    deleteId.value = [] // 清空选中
-  } catch(error){
-    ElMessage.error('删除失败')
+const batchDelete = async () => {
+  try {
+    await reqSentenceDeleteData(deleteId.value)
+    ElMessage.success('成功删除')
+    deleteId.value = []
+    await getPagesDate()
+  } catch (error) {
+    ElMessage.error('删除失败: ' + error.message)
+  } finally {
+    confirmVisible.value = false
   }
 }
+
+//点击增加按钮
+const changedialog = () =>{
+  dialogFormVisible.value = true
+}
+
+
 
 </script>
 
@@ -134,7 +186,7 @@ const batchDelete = async  () => {
           v-show="changebom">
         批量删除 (已选 {{ deleteId.length }} 条)
       </el-button>
-      <el-button type="info" size="default" icon="Plus" @click="changedialog">添加诗词</el-button>
+      <el-button type="info" size="default" icon="Plus" @click="changedialog">添加名句</el-button>
       <el-input v-model="search" size="small" :prefix-icon="Search" style="width: 240px;margin-left: 30px"/>
     </div>
     <el-table border style="margin:10px 0px" :data="attrArr" @selection-change="handleSelectionChange">
@@ -143,24 +195,23 @@ const batchDelete = async  () => {
       <el-table-column label="名句" prop="name"></el-table-column>
       <el-table-column label="作者-诗名" prop=" fromm"></el-table-column>
       <el-table-column fixed="right" label="操作" min-width="120">
-        <template #default>
-          <el-button link type="primary" size="small" icon="Edit" @click="updateTrademark">
+        <template #default="{ row }" >
+          <el-button link type="primary" size="small" icon="Edit" @click="updateTrademark(row)">
             修改
           </el-button>
-          <el-button link type="primary" size="small" icon="Delete" @click="batchDelete([row.id])">删除</el-button>
+          <el-button link type="primary" size="small" icon="Delete" @click="batchDelete()">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
     <el-pagination
-        v-model:current-page="currentPage3"
-        v-model:page-size="pageSize3"
-        :size="size"
-        :disabled="disabled"
-        :background="background"
-        layout="prev, pager, next, jumper"
-        :total="1000"
-        @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"
+        v-model:current-page="pageNo"
+        v-model:page-size="pageSize"
+        :page-sizes="[10, 20, 30, 50]"
+        :background="true"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="total"
+        @size-change="val => handlePagination('size', val)"
+        @current-change="val => handlePagination('page', val)"
     />
   </el-card>
   <el-dialog v-model="dialogFormVisible" title="添加名句" width="840">
@@ -173,7 +224,7 @@ const batchDelete = async  () => {
       </el-form-item>
     </el-form>
     <template #footer>
-      <el-button @click="confirm">确定</el-button>
+      <el-button @click="postData">确定</el-button>
       <el-button @click="cancel">取消</el-button>
     </template>
   </el-dialog>

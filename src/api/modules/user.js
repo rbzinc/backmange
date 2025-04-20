@@ -38,3 +38,16 @@ export const userRegisterService = (username, password, email, code) => instance
         code
     }
 })
+
+//获取所有用户的接口
+export const getAllusersData = (params) => instance({
+    url: "/admin/getAll",
+    method: "get",
+    params
+});
+
+export const postAIData = (params) => instance({
+    url: '/admin/command/handle',
+    method: 'POST',
+    params
+});
