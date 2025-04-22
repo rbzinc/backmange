@@ -46,20 +46,25 @@ const cardlist = ref([
   { title: "名句数量", content: 573544, icon: "Comment" }
 ])
 console.log(cardlist.value[1].content) // 正确写法
+//发送请求获取数据
 const getcontents = async () =>{
-  cardlist.value[2].content = await PoemDatas()
-  cardlist.value[1].content = await PoetDatas()
-  cardlist.value[3].content = await SentenceDatas()
-  cardlist.value[0].content = await UserDatas()
+   const res1 = await PoemDatas()
+  cardlist.value[2].content = res1.data
+  const res2= await PoetDatas()
+  cardlist.value[1].content= res2.data
+  const res3= await SentenceDatas()
+  cardlist.value[3].content= res3.data
+  const res4= await UserDatas()
+  cardlist.value[0].content= res4.data
 }
 
-// onMounted(() => {
-//   getcontents();
-// })
+onMounted(() => {
+  getcontents();
+})
 
 import { ElMessage } from 'element-plus'
 
-// 修改后的请求方法
+// 智能助手发送请求
 const postai = async () => {
   try {
     const params = {
@@ -86,7 +91,7 @@ const postai = async () => {
   <div class="dashboard-container">
     <!-- 数据卡片 -->
     <DataCard :cardlist="cardlist" class="data-card-wrapper"/>
-    <!--ai助手-->
+    <!--智能助手-->
     <div class="aichat">
       <el-card style="max-width: 480px" class="el-card">
         <el-input placeholder="请输入指令" v-model="key"  @keyup.enter="postai" autosize/>

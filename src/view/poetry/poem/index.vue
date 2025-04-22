@@ -1,6 +1,12 @@
 <script setup>
 import {ref,computed,onMounted,watch} from 'vue'
-import {getPoemData,reqPoemUpdateData,reqPoemAddData,reqPoemDeleteData,reqPoemSearchData} from "@/api/modules/poetry.js";
+import {
+  getPoemData,
+  reqPoemUpdateData,
+  reqPoemAddData,
+  reqPoemDeleteData,
+  reqPoemSearchData,
+} from "@/api/modules/poetry.js";
 import {Lock, Search} from "@element-plus/icons-vue";
 import { ElMessage } from 'element-plus'
 
@@ -39,6 +45,7 @@ watch(() => search.value, (newVal) => {
     getPagesDate()
   }
 }, { immediate: true })
+
 
 //分页处理
 // 修改后的分页请求方法
@@ -88,7 +95,6 @@ const postData = async () => {
       dynasty: poemDates.value.dynasty,
       writer: poemDates.value.writer,
       content: poemDates.value.content,
-      type: poemDates.value.type,
     }
     console.log(params)
     //转换为布尔值并进行判断
@@ -151,6 +157,8 @@ const batchDelete = async () => {
     console.log(deleteId.value)
     await reqPoemDeleteData(deleteId.value)
     ElMessage.success('成功删除')
+    checked.value = false
+    changebom.value = false
     deleteId.value = []
     await getPagesDate()
   } catch (error) {
@@ -160,9 +168,20 @@ const batchDelete = async () => {
   }
 }
 
+const aloneDelete = async (row) => {
+    console.log(row)
+  const idsArray = [row.id];
+  await reqPoemDeleteData(idsArray);
+    ElMessage.success('成功删除')
+    deleteId.value = []
+    await getPagesDate()
+    confirmVisible.value = false
+}
+
 //添加按钮
-const changedialog = () =>{
-  dialogFormVisible.value = true
+const changedialog = () => {
+  poemDates.value = { id: '', title: '', dynasty: '', writer: '', content: '', type: '' };
+  dialogFormVisible.value = true;
 }
 
 //取消按钮
@@ -220,7 +239,7 @@ const cancel = () =>{
               type="primary"
               size="small"
               icon="Delete"
-              @click="batchDelete()"
+              @click="aloneDelete(row)"
           >
             删除
           </el-button>
@@ -251,9 +270,6 @@ const cancel = () =>{
       </el-form-item>
       <el-form-item label="内容">
         <el-input placeholder="请输入内容" v-model="poemDates.content"></el-input>
-      </el-form-item>
-      <el-form-item label="类型">
-        <el-input placeholder="请输入类型" v-model="poemDates.type"></el-input>
       </el-form-item>
     </el-form>
     <template #footer>

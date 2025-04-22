@@ -56,9 +56,8 @@ const getPagesDate = async (pager = pageNo.value) => {
     console.log(result)
     total.value = result.data.total
     attrArr.value = result.data.list
-    if(attrArr.value.length === 0 && pageNo.value > 1){
-      pageNo.value--
-      await getPagesDate(pageNo.value)
+    if(search.value){
+      attrArr.value = result.data
     }
   } catch (error) {
     ElMessage.error(`数据加载失败: ${error.message}`)
@@ -86,6 +85,7 @@ const postData = async () => {
     const params = {
       id: poetDates.value.id,
       name: poetDates.value.name,
+      headImageUrl:'',
       detailIntro: poetDates.value.detailIntro,
       simpleIntro: poetDates.value.simpleIntro
     }
@@ -116,7 +116,7 @@ const postData = async () => {
 //点击修改按钮操作，使表单拥有数据
 const updateTrademark = (row) => {
   dialogFormVisible.value = true
-  Object.assign(poetDates, row)
+  Object.assign(poetDates.value, row);
 }
 
 //进行删除操作
@@ -126,25 +126,13 @@ const handleSelectionChange = (selection) => {
   console.log('当前选中 ID 数组:', deleteId.value)
 }
 
-// 批量删除方法
-// const batchDelete = async () => {
-//   try {
-//     console.log(deleteId.value)
-//     await reqSerPoetDeleteData(deleteId.value)
-//     ElMessage.success('成功删除')
-//     deleteId.value = []
-//     await getPagesDate()
-//   } catch (error) {
-//     ElMessage.error('删除失败: ' + error.message)
-//   } finally {
-//     confirmVisible.value = false
-//   }
-// }
 const batchDelete = async () => {
   try {
-    const ids = deleteId.value.map(id => Number(id));
-    await reqSerPoetDeleteData(ids);
-    ElMessage.success('删除成功');
+    const idsString = deleteId.value.join(',')
+    await reqPoetDeleteData(idsString)
+    ElMessage.success('删除成功')
+    checked.value = false
+    changebom.value = false
     deleteId.value = []
     await getPagesDate();
   } catch (error) {
@@ -155,8 +143,7 @@ const batchDelete = async () => {
 }
 
 const alonedelete = async (row) => {
-  const res=  await reqPoetDeleteData(row.id)
-  console.log(res.data)
+  await reqPoetDeleteData(row.id)
   ElMessage.success('成功删除')
   deleteId.value = []
   await getPagesDate()
@@ -183,6 +170,7 @@ const dialogFormVisible = ref(false)
 
 //添加按钮
 const changedialog = () =>{
+  poetDates.value = { id: '', simpleIntro: '', detailIntro: '' };
   dialogFormVisible.value = true
 }
 
@@ -241,7 +229,7 @@ const confirm = () =>{
         @current-change="val => handlePagination('page', val)"
     />
   </el-card>
-  <el-dialog v-model="dialogFormVisible" title="添加诗人" width="840">
+  <el-dialog v-model="dialogFormVisible" :title="poetDates.id ? '修改诗人' : '添加诗人'"  width="840">
     <el-form style="width: 80%;">
       <el-form-item label="诗人">
         <el-input placeholder="请输入诗人" v-model="poetDates.name"></el-input>

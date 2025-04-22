@@ -84,6 +84,8 @@ const batchDelete = async () => {
     console.log(Array.isArray(deleteId.value))
     await deleteNotebookData(deleteId.value)
     ElMessage.success('成功删除')
+    checked.value = false
+    changebom.value = false
     deleteId.value = []
     await getPagesDate()
   } catch (error) {
@@ -112,6 +114,7 @@ const batchDelete = async () => {
       </el-button>
     </div>
     <el-table border style="margin:10px 0px" :data="attrArr" @selection-change="handleSelectionChange">
+      <el-table-column type="selection" width="55" v-if="checked"/>
       <el-table-column label="序号" prop="id"></el-table-column>
       <el-table-column label="操作" prop="title"></el-table-column>
       <el-table-column label="时间" prop="time"></el-table-column>

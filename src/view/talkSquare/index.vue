@@ -79,8 +79,23 @@ const handleSelectionChange = (selection) => {
 // 批量删除方法
 const batchDelete = async () => {
   try {
-    console.log(deleteId.value)
-    await deleteTalksquareData(deleteId.value)
+    const idsString = deleteId.value.join(',')
+    await deleteTalksquareData(idsString)
+    ElMessage.success('成功删除')
+    deleteId.value = []
+    checked.value = false
+    changebom.value = false
+    await getPagesDate()
+  } catch (error) {
+    ElMessage.error('删除失败: ' + error.message)
+  } finally {
+    confirmVisible.value = false
+  }
+}
+//单个删除方法
+const aloneDelete = async (row) => {
+  try {
+    await deleteTalksquareData(row.id)
     ElMessage.success('成功删除')
     deleteId.value = []
     await getPagesDate()
@@ -90,7 +105,6 @@ const batchDelete = async () => {
     confirmVisible.value = false
   }
 }
-
 </script>
 
 <template>
@@ -130,7 +144,7 @@ const batchDelete = async () => {
               type="primary"
               size="small"
               icon="Delete"
-              @click="batchDelete()"
+              @click="aloneDelete(row)"
           >
             删除
           </el-button>

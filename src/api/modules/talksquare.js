@@ -11,5 +11,7 @@ export const postTalksquareData = ( params ) => instance({
 export const deleteTalksquareData = ( ids ) => instance({
     url: "/notice/delete",
     method: "post",
-    params:ids
+    params:{
+        ids
+    }
 })

@@ -4,7 +4,7 @@ const userStore = useUserStore();
 
 const instance = axios.create({
   // TODO 1. 基础地址，超时时间
-  baseURL: "http://192.168.132.5:8080", // 确保这里的URL是正确的，没有多余的字符
+  baseURL: "http://120.27.234.36:8080", // 确保这里的URL是正确的，没有多余的字符
   headers: {
     'Content-Type': 'application/json',
     'token': userStore.userInfo?.token

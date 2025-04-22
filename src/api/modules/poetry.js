@@ -40,7 +40,7 @@ export const reqPoemDeleteData = (ids) => instance({
 export const getPoetData = (params) => instance({
     url: "/admin/writer/GetWritersByPage",
     method: "get",
-    query: params
+    params
 });
 
 //诗人修改数据

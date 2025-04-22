@@ -7,7 +7,7 @@ import {
   changeNoticeData,
 } from "@/api/modules/notice.js";
 import {ElMessage} from "element-plus";
-import {Search} from "@element-plus/icons-vue";
+import {reqSentenceDeleteData} from "@/api/index.js";
 
 
 //定义收集新增公告数据
@@ -15,7 +15,6 @@ let noticeDates = ref({
   id:'',
   name: '',
   contents:'',
-  createtime:''
 })
 
 let pageNo =ref(1)
@@ -43,6 +42,7 @@ const getPagesDate = async (pager = pageNo.value) => {
     }
     const result = await getNoticeData(params)
     total.value = result.data.total
+    console.log(result.data)
     attrArr.value = result.data.records
     if(attrArr.value.length === 0 && pageNo.value > 1){
       pageNo.value--
@@ -106,8 +106,9 @@ const updateTrademark = (row) => {
   console.log(row)
 }
 
-
+//添加按钮
 const changedialog = () =>{
+  noticeDates.value = { id: '', name: '',  contents: '' };
   dialogFormVisible.value = true
 
 }
@@ -144,10 +145,11 @@ const handleSelectionChange = (selection) => {
 // 批量删除方法
 const batchDelete = async () => {
   try {
-    console.log(deleteId.value)
-    console.log(Array.isArray(deleteId.value))
-    await deleteNoticeData(deleteId.value)
+    const idsString = deleteId.value.join(',')
+    await deleteNoticeData(idsString)
     ElMessage.success('成功删除')
+    checked.value = false
+    changebom.value = false
     deleteId.value = []
     await getPagesDate()
   } catch (error) {
@@ -156,7 +158,20 @@ const batchDelete = async () => {
     confirmVisible.value = false
   }
 }
-
+//单个删除方法
+const aloneDelete = async (row) => {
+  try {
+    await deleteNoticeData(row.id)
+    ElMessage.success('成功删除')
+    checked.value = false
+    deleteId.value = []
+    await getPagesDate()
+  } catch (error) {
+    ElMessage.error('删除失败: ' + error.message)
+  } finally {
+    confirmVisible.value = false
+  }
+}
 </script>
 
 <template>
@@ -175,7 +190,6 @@ const batchDelete = async () => {
         批量删除 (已选 {{ deleteId.length }} 条)
       </el-button>
       <el-button type="info" size="default" icon="Plus" @click="changedialog">添加公告</el-button>
-      <el-input v-model="search" size="small" :prefix-icon="Search" style="width: 240px;margin-left: 30px"/>
     </div>
     <el-table border style="margin:10px 0px" :data="attrArr" @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55" v-if="checked"/>
@@ -187,11 +201,11 @@ const batchDelete = async () => {
       <el-table-column label="时间" prop="createtime">
       </el-table-column>
       <el-table-column fixed="right" label="操作" min-width="120">
-        <template #default>
-          <el-button link type="primary" size="small" icon="Edit" @click="updateTrademark">
+        <template  #default="{ row }">
+          <el-button link type="primary" size="small" icon="Edit" @click="updateTrademark(row)">
             修改
           </el-button>
-          <el-button link type="primary" size="small" icon="Delete" @click="batchDelete(row)">删除</el-button>
+          <el-button link type="primary" size="small" icon="Delete" @click="aloneDelete(row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -206,7 +220,7 @@ const batchDelete = async () => {
         @current-change="val => handlePagination('page', val)"
     />
   </el-card>
-  <el-dialog v-model="dialogFormVisible" title="添加公告" width="840">
+  <el-dialog v-model="dialogFormVisible" :title="noticeDates.id ? '修改公告' : '添加公告'" width="840">
     <el-form style="width: 80%;">
       <el-form-item label="标题">
         <el-input placeholder="请输入标题" v-model="noticeDates.name"></el-input>

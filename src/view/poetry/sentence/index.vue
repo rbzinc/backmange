@@ -57,6 +57,9 @@ const getPagesDate = async (pager = pageNo.value) => {
     total.value = result.data.total
     console.log(result.data)
     attrArr.value = result.data.records
+    if(search.value){
+      attrArr.value = result.data
+    }
     if(attrArr.value.length === 0 && pageNo.value > 1){
       pageNo.value--
       await getPagesDate(pageNo.value)
@@ -116,7 +119,7 @@ const postData = async () => {
 //点击修改按钮操作
 const updateTrademark = (row) => {
   dialogFormVisible.value = true
-  Object.assign(sentenceDates, row)
+  Object.assign(sentenceDates.value, row)
 }
 
 //取消按钮
@@ -149,17 +152,35 @@ const handleSelectionChange = (selection) => {
   console.log('当前选中 ID 数组:', deleteId.value)
 }
 
-// 批量删除方法
-const batchDelete = async (row) => {
+// 删除单个方法
+const aloneDelete = async (row) => {
     const res=  await reqSentenceDeleteData(row.id)
-  console.log(res)
+    console.log(res)
     ElMessage.success('成功删除')
     deleteId.value = []
     await getPagesDate()
 }
 
+//删除多个方法
+const batchDelete = async () => {
+  try {
+    const idsString = deleteId.value.join(',')
+    await reqSentenceDeleteData(idsString)
+    ElMessage.success('删除成功')
+    checked.value = false
+    changebom.value = false
+    deleteId.value = []
+    await getPagesDate()
+  } catch (error) {
+    ElMessage.error('删除失败: ' + error.message)
+  } finally {
+    confirmVisible.value = false;
+  }
+}
+
 //点击增加按钮
 const changedialog = () =>{
+  sentenceDates.value = { id: '', fromm: '', name: '' };
   dialogFormVisible.value = true
 }
 
@@ -195,7 +216,7 @@ const changedialog = () =>{
           <el-button link type="primary" size="small" icon="Edit" @click="updateTrademark(row)">
             修改
           </el-button>
-          <el-button link type="primary" size="small" icon="Delete" @click="batchDelete(row)">删除</el-button>
+          <el-button link type="primary" size="small" icon="Delete" @click="aloneDelete(row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -210,7 +231,7 @@ const changedialog = () =>{
         @current-change="val => handlePagination('page', val)"
     />
   </el-card>
-  <el-dialog v-model="dialogFormVisible" title="添加名句" width="840">
+  <el-dialog v-model="dialogFormVisible" :title="sentenceDates.id ? '修改名句' : '添加名句'" width="840">
     <el-form style="width: 80%;">
       <el-form-item label="名句">
         <el-input placeholder="请输入名句" v-model="sentenceDates.fromm"></el-input>
