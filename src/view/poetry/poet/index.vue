@@ -58,6 +58,7 @@ const getPagesDate = async (pager = pageNo.value) => {
     attrArr.value = result.data.list
     if(search.value){
       attrArr.value = result.data
+      console.log(result.data)
     }
   } catch (error) {
     ElMessage.error(`数据加载失败: ${error.message}`)

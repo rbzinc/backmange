@@ -49,7 +49,8 @@ const getPagesDate = async (pager = pageNo.value) => {
       pageNum: pager,
       pageSize: pageSize.value,
     }
-    const searchdata = search.value
+    let searchdata = search.value
+    console.log(searchdata)
     //判断进行搜素还是获取数据的操作
     const result = search.value
         ? await reqSentenceSearchData(searchdata)

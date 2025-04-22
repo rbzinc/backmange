@@ -117,7 +117,7 @@ export const reqSentenceDeleteData = (ids) => instance({
 //名句搜索数据
 export const reqSentenceSearchData = (data) => instance({
     url: "/getRhesisByPoemName",
-    method: "post",
+    method: "get",
     params: {
         name:data
     },
