@@ -62,7 +62,14 @@ onMounted(() => {
       <el-table-column label="电话号码" prop="phone"></el-table-column>
       <el-table-column label="邮箱" prop="email"></el-table-column>
       <el-table-column label="注册时间" prop="createtime"></el-table-column>
-
+<!--      <el-table-column fixed="right" label="操作" min-width="120">-->
+<!--        <template #default="{ row }" >-->
+<!--          <el-button link type="primary" size="small" icon="Edit" @click="">-->
+<!--            禁用-->
+<!--          </el-button>-->
+<!--          <el-button link type="primary" size="small" icon="Delete" @click="">启用</el-button>-->
+<!--        </template>-->
+<!--      </el-table-column>-->
     </el-table>
     <el-pagination
         v-model:current-page="pageNo"

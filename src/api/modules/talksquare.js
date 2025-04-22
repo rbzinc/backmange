@@ -9,7 +9,7 @@ export const postTalksquareData = ( params ) => instance({
 
 //批量删除帖子
 export const deleteTalksquareData = ( ids ) => instance({
-    url: "/notice/delete",
+    url: "/admin/blog/deleteBlog",
     method: "post",
     params:{
         ids

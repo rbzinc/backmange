@@ -23,10 +23,14 @@ export const reqPoemAddData = (data) => instance({
 })
 
 //古诗搜索数据
-export const reqPoemSearchData = (id, title, dynasty, writer, content, type ) => instance({
+export const reqPoemSearchData = ( word,pagenum) => instance({
     url: "/admin/potry/getPoem",
     method: "get",
-    data: { id, title, dynasty, writer, content, type }
+    params:{
+        word:word,
+        pageNum:pagenum,
+        pageSize:10
+    }
 })
 
 //古诗删除数据
@@ -45,22 +49,22 @@ export const getPoetData = (params) => instance({
 
 //诗人修改数据
 export const reqPoetUpdateData = ( params ) => instance({
-    url: "/admin/potry/update",
+    url: "/admin/writer/update",
     method: "post",
     data: params
 })
 
 //诗人增加数据
 export const reqPoetAddData = ( params ) => instance({
-    url: "/admin/potry/add",
+    url: "/admin/writer/add",
     method: "post",
     data: params
 })
 
 //诗人删除数据
 export const reqPoetDeleteData = (ids) => instance({
-    url: "/admin/potry/GetPoemPage",
-    method: "get",
+    url: "/admin/writer/delete",
+    method: "post",
     params:{
         ids
     }

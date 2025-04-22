@@ -56,15 +56,16 @@ const getPagesDate = async (pager = pageNo.value) => {
       pageSize: pageSize.value,
     }
     const searchdata = search.value
+    const pagenum = pager
     const result = search.value
-        ? await reqPoemSearchData(searchdata)
+        ? await reqPoemSearchData(searchdata,pagenum)
         : await getPoemData(params)
     total.value = result.data.total
     attrArr.value = result.data.records
-    if(attrArr.value.length === 0 && pageNo.value > 1){
-      pageNo.value--
-      await getPagesDate(pageNo.value)
+    if(search.value){
+      attrArr.value = result.data.records
     }
+
   } catch (error) {
     ElMessage.error(`数据加载失败: ${error.message}`)
   }

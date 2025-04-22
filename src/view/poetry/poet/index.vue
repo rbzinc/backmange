@@ -1,5 +1,5 @@
 <script setup>
-import {computed, onMounted, ref,watch} from "vue";
+import {onMounted, ref,watch} from "vue";
 import {
   reqPoetDeleteData,
   getPoetData,
@@ -95,7 +95,7 @@ const postData = async () => {
     const isEdit = !!params.id;
     const result = isEdit
         ? await reqPoetUpdateData(params)
-        : await reqPoetAddData(params);
+        : await reqPoetAddData(params)
     if (result.code === 1) {
       ElMessage.success(isEdit ? '诗人修改成功' : '诗人添加成功');
       dialogFormVisible.value = false;

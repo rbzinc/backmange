@@ -11,5 +11,7 @@ export const postNotebookData = ( params ) => instance({
 export const deleteNotebookData = (ids) => instance({
     url: "/admin/log/delete",
     method: "get",
-    params: ids
+    params: {
+        ids
+    }
 });

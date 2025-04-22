@@ -80,9 +80,8 @@ const handleSelectionChange = (selection) => {
 // 批量删除方法
 const batchDelete = async () => {
   try {
-    console.log(deleteId.value)
-    console.log(Array.isArray(deleteId.value))
-    await deleteNotebookData(deleteId.value)
+    const idsString = deleteId.value.join(',')
+    await deleteNotebookData(idsString)
     ElMessage.success('成功删除')
     checked.value = false
     changebom.value = false
@@ -93,6 +92,15 @@ const batchDelete = async () => {
   } finally {
     confirmVisible.value = false
   }
+}
+
+// 删除单个方法
+const aloneDelete = async (row) => {
+  const res=  await deleteNotebookData(row.id)
+  console.log(res)
+  ElMessage.success('成功删除')
+  deleteId.value = []
+  await getPagesDate()
 }
 
 </script>
@@ -119,13 +127,13 @@ const batchDelete = async () => {
       <el-table-column label="操作" prop="title"></el-table-column>
       <el-table-column label="时间" prop="time"></el-table-column>
       <el-table-column fixed="right" label="操作" min-width="120">
-        <template #default>
+        <template #default = {row}>
           <el-button
               link
               type="primary"
               size="small"
               icon="Delete"
-              @click="batchDelete()"
+              @click="aloneDelete(row)"
           >
             删除
           </el-button>
